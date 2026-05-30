@@ -19,7 +19,12 @@ from auth import (
 # ── Create tables after the event loop starts (safe with Render cold-start) ──
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✓ Database tables ready")
+    except Exception as e:
+        print(f"✗ Database setup failed: {e}")
+        raise
     yield
 
 
