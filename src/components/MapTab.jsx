@@ -256,10 +256,10 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
 
   // Shared Map Container Layout (renders actual Google Maps or Fallback Mock CSS Grid Map)
   const mapElement = (
-    <div className="flex-1 h-full w-full relative min-h-[300px]">
+    <div className="absolute inset-0" style={{ minHeight: 300 }}>
       {googleMapsError || !googleMapsLoaded ? (
         /* CSS Grid Mock Map Fallback */
-        <div className="w-full h-full min-h-[300px] relative overflow-hidden bg-aura-card map-grid-bg flex flex-col items-center justify-center transition-colors duration-300">
+        <div className="absolute inset-0 overflow-hidden bg-aura-card map-grid-bg flex flex-col items-center justify-center transition-colors duration-300">
           
           {/* Mock Grid Lines & Radar concentric circles */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
@@ -325,8 +325,8 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
           )}
         </div>
       ) : (
-        /* Real Google Map Container */
-        <div ref={mapRef} className="w-full h-full relative"></div>
+        /* Real Google Map Container — must use absolute inset-0 so Google Maps gets a real pixel height */
+        <div ref={mapRef} className="absolute inset-0"></div>
       )}
 
       {/* Floating Center Button */}
@@ -550,9 +550,9 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
     );
   }
 
-  // Mobile layout
+  // Mobile layout — absolute inset-0 fills the relative motion.div in Dashboard
   return (
-    <div className="flex-1 flex flex-col relative bg-aura-deep text-aura-text transition-colors duration-300">
+    <div className="absolute inset-0 bg-aura-deep text-aura-text transition-colors duration-300">
       
       {/* Top Filter Chips */}
       <div className="absolute top-3 left-3 right-3 z-30 flex gap-1.5 overflow-x-auto pb-2 scrollbar-none select-none">
