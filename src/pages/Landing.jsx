@@ -245,6 +245,79 @@ export default function Landing({ onNavigate, isLaptopDimensions }) {
           </div>
         </motion.div>
 
+        {/* Tech Stack & Data Sources */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="w-full border-t border-aura-border/30 pt-10 pb-6"
+        >
+          <div className={`grid gap-8 ${isLaptopDimensions ? 'grid-cols-2' : 'grid-cols-1'}`}>
+
+            {/* Tech Stack */}
+            <div>
+              <h2 className="text-sm font-bold tracking-widest text-aura-text font-mono uppercase mb-1">
+                Tech Stack
+              </h2>
+              <p className="text-[10px] text-aura-muted mb-5 font-mono">Libraries and tools powering this MVP</p>
+              <div className="space-y-2">
+                {[
+                  { label: 'React 19 + Vite 8',        desc: 'UI framework & build tool',                   color: 'text-aura-cyan',   dot: 'bg-aura-cyan'   },
+                  { label: 'Tailwind CSS 3',            desc: 'Utility-first styling',                       color: 'text-aura-blue',   dot: 'bg-aura-blue'   },
+                  { label: 'Framer Motion',             desc: 'Animations & transitions',                    color: 'text-aura-purple', dot: 'bg-aura-purple' },
+                  { label: 'Leaflet + react-leaflet',   desc: 'Interactive map rendering',                   color: 'text-aura-green',  dot: 'bg-aura-green'  },
+                  { label: 'CartoDB / OpenStreetMap',   desc: 'Free map tile provider',                      color: 'text-aura-green',  dot: 'bg-aura-green'  },
+                  { label: 'OpenCV.js (CDN)',           desc: 'Client-side contour detection',               color: 'text-aura-orange', dot: 'bg-aura-orange' },
+                  { label: 'vite-plugin-pwa / Workbox', desc: 'Service worker + offline caching',            color: 'text-aura-blue',   dot: 'bg-aura-blue'   },
+                  { label: 'Render (Static Site)',      desc: 'Hosting & deployment platform',               color: 'text-aura-muted',  dot: 'bg-aura-muted'  },
+                ].map(({ label, desc, color, dot }) => (
+                  <div key={label} className="flex items-center gap-3 p-2.5 rounded-lg bg-aura-card/20 border border-aura-border/30 hover:border-aura-border transition-all">
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`}></span>
+                    <span className={`text-[11px] font-mono font-semibold ${color} flex-shrink-0 w-44`}>{label}</span>
+                    <span className="text-[10px] text-aura-muted">{desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Data Sources */}
+            <div>
+              <h2 className="text-sm font-bold tracking-widest text-aura-text font-mono uppercase mb-1">
+                Data Sources
+              </h2>
+              <p className="text-[10px] text-aura-muted mb-5 font-mono">Public datasets used for UAP classification</p>
+              <div className="space-y-2">
+                {[
+                  { label: 'NUFORC',              desc: 'National UFO Reporting Center — 80,000+ filed reports',                      href: 'https://nuforc.org'           },
+                  { label: 'Kaggle UFO Dataset',  desc: 'Sigmond Axel\'s cleaned NUFORC export with geocoordinates',                   href: 'https://kaggle.com'           },
+                  { label: 'MUFON',               desc: 'Mutual UFO Network — shape & behaviour field taxonomy',                       href: 'https://mufon.com'            },
+                  { label: 'DoD AARO 2023',       desc: 'All-domain Anomaly Resolution Office annual report — 5-domain classification', href: 'https://aaro.mil'             },
+                  { label: 'Hessdalen Project',   desc: 'Norwegian scientific study of persistent light anomalies since 1984',          href: 'http://www.hessdalen.org'     },
+                  { label: 'NICAP',               desc: 'National Investigations Committee on Aerial Phenomena historical records',     href: 'http://www.nicap.org'         },
+                  { label: 'NASA GISS',           desc: 'Nighttime light pollution map used for luminosity reference calibration',      href: 'https://earthobservatory.nasa.gov' },
+                  { label: 'FAA Aircraft Registry', desc: 'Cross-referenced to eliminate known commercial aircraft from UAP pool',     href: 'https://faa.gov'              },
+                ].map(({ label, desc, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-2.5 rounded-lg bg-aura-card/20 border border-aura-border/30 hover:border-aura-purple/40 hover:bg-aura-purple/5 transition-all group block"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-aura-purple flex-shrink-0 mt-1"></span>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-mono font-semibold text-aura-purple group-hover:text-aura-purple block">{label} ↗</span>
+                      <span className="text-[10px] text-aura-muted leading-relaxed">{desc}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
+
       </div>
 
       {/* Footer */}
