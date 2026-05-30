@@ -33,6 +33,13 @@ const tagColor = (tag) => {
   return '#3A6BFF';
 };
 
+const getVerdictColor = (score) => {
+  if (score >= 85) return '#B06AFF'; // purple (ANOMALOUS)
+  if (score >= 60) return '#FF8C00'; // orange (SUSPICIOUS)
+  if (score >= 30) return '#22B8C9'; // cyan (LOW RISK)
+  return '#22C97A'; // green (IDENTIFIED)
+};
+
 const makeIcon = (tag, selected = false) => {
   const color = tagColor(tag);
   const size = selected ? 20 : 13;
@@ -198,6 +205,21 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
               </span>
             </div>
 
+            {selectedReport.uap_confidence !== undefined && selectedReport.uap_confidence !== null && (
+              <div className="mb-3 p-2 bg-black/25 border border-aura-border/50 rounded-lg flex flex-col gap-1 select-none">
+                <div className="flex justify-between items-center text-[10px] font-mono">
+                  <span className="text-aura-muted uppercase tracking-wider text-[8px] font-semibold">AI Verification Score</span>
+                  <span className="font-bold text-xs" style={{ color: getVerdictColor(selectedReport.uap_confidence) }}>
+                    {selectedReport.uap_confidence.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="text-[9px] font-mono font-bold tracking-tight uppercase flex items-center gap-1" style={{ color: getVerdictColor(selectedReport.uap_confidence) }}>
+                  <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ backgroundColor: getVerdictColor(selectedReport.uap_confidence) }}></span>
+                  {selectedReport.verdict}
+                </div>
+              </div>
+            )}
+
             {selectedReport.image && (
               <div className="relative border border-aura-border bg-black/40 rounded-lg overflow-hidden h-28 mb-3 select-none">
                 <img
@@ -299,12 +321,19 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
                     >
                       <div className="flex justify-between items-start gap-2">
                         <span className="font-bold text-xs text-aura-text line-clamp-1 flex-1 leading-tight">{report.title}</span>
-                        <span
-                          className="px-2 py-0.5 rounded text-[8px] font-semibold font-mono uppercase tracking-wider border"
-                          style={{ color, borderColor: `${color}40`, background: `${color}18` }}
-                        >
-                          {report.tag}
-                        </span>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          <span
+                            className="px-2 py-0.5 rounded text-[8px] font-semibold font-mono uppercase tracking-wider border"
+                            style={{ color, borderColor: `${color}40`, background: `${color}18` }}
+                          >
+                            {report.tag}
+                          </span>
+                          {report.uap_confidence !== undefined && report.uap_confidence !== null && (
+                            <span className="text-[8px] font-mono font-bold" style={{ color: getVerdictColor(report.uap_confidence) }}>
+                              AI: {report.uap_confidence.toFixed(0)}%
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex gap-2.5 items-start">
@@ -475,12 +504,19 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
                       >
                         <div className="flex justify-between items-start gap-2">
                           <span className="font-bold text-xs text-aura-text line-clamp-1 flex-1 leading-tight">{report.title}</span>
-                          <span
-                            className="px-2 py-0.5 rounded text-[8px] font-semibold font-mono uppercase tracking-wider border flex-shrink-0"
-                            style={{ color, borderColor: `${color}40`, background: `${color}18` }}
-                          >
-                            {report.tag}
-                          </span>
+                          <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                            <span
+                              className="px-2 py-0.5 rounded text-[8px] font-semibold font-mono uppercase tracking-wider border flex-shrink-0"
+                              style={{ color, borderColor: `${color}40`, background: `${color}18` }}
+                            >
+                              {report.tag}
+                            </span>
+                            {report.uap_confidence !== undefined && report.uap_confidence !== null && (
+                              <span className="text-[8px] font-mono font-bold" style={{ color: getVerdictColor(report.uap_confidence) }}>
+                                AI: {report.uap_confidence.toFixed(0)}%
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <div className="flex gap-2.5 items-start">

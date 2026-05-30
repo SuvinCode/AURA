@@ -14,6 +14,7 @@ from auth import (
     create_access_token,
     get_current_user, get_optional_user,
 )
+from ml_model import predictor
 
 
 # ── Create tables after the event loop starts (safe with Render cold-start) ──
@@ -22,6 +23,8 @@ async def lifespan(app: FastAPI):
     try:
         Base.metadata.create_all(bind=engine)
         print("✓ Database tables ready")
+        predictor.train()
+        print("✓ UAP Confidence Model trained and ready")
     except Exception as e:
         print(f"✗ Database setup failed: {e}")
         raise
@@ -101,6 +104,8 @@ def _report_out(r: models.Report) -> schemas.ReportOut:
         lng=r.lng,
         behaviors=r.behaviors or [],
         image=r.image or "",
+        uap_confidence=r.uap_confidence,
+        verdict=r.verdict,
         created_at=r.created_at,
         user_id=r.user_id,
         username=r.author.username if r.author else None,
@@ -119,6 +124,15 @@ def create_report(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
+    # Predict UAP confidence and verdict using the backend ML model
+    pred_score, verdict = predictor.predict_uap_confidence(
+        description=body.description,
+        behaviors=body.behaviors,
+        type_str=body.type,
+        lat=body.lat,
+        lng=body.lng
+    )
+
     report = models.Report(
         title=body.title or f"Sighting by {current_user.username}",
         description=body.description,
@@ -128,6 +142,8 @@ def create_report(
         lng=body.lng,
         behaviors=body.behaviors,
         image=body.image,
+        uap_confidence=pred_score,
+        verdict=verdict,
         user_id=current_user.id,
     )
     db.add(report)

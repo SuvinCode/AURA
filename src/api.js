@@ -60,6 +60,8 @@ export function normaliseApiReport(r) {
     lng: r.lng,
     behaviors: r.behaviors || [],
     image: r.image || '',
+    uap_confidence: r.uap_confidence,
+    verdict: r.verdict,
     distance: '— km away',   // recalculated client-side in MapTab
     time: new Date(r.created_at).toLocaleString(),
     submittedBy: r.username || 'Anonymous',

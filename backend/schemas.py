@@ -42,6 +42,8 @@ class ReportCreate(BaseModel):
     lng: float
     behaviors: list[str] = []
     image: str = ""
+    uap_confidence: Optional[float] = None
+    verdict: Optional[str] = None
 
 
 class ReportOut(BaseModel):
@@ -54,6 +56,8 @@ class ReportOut(BaseModel):
     lng: float
     behaviors: list[str]
     image: str
+    uap_confidence: Optional[float] = None
+    verdict: Optional[str] = None
     created_at: datetime
     user_id: Optional[int]
     username: Optional[str] = None
