@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light Mode values */
+  --color-aura-deep: #F3F6FC;     /* soft bright background */
+  --color-aura-card: #FFFFFF;     /* pure white card */
+  --color-aura-input: #E7EEFC;    /* soft slate blue input */
+  --color-aura-border: #D6E3F7;   /* light blue border */
+  --color-aura-text: #0F172A;     /* dark slate text */
+  --color-aura-muted: #5E7292;    /* muted blue-slate */
+  
+  --color-aura-blue: #2563EB;
+  --color-aura-purple: #7C3AED;
+  --color-aura-cyan: #0891B2;
+  --color-aura-green: #059669;
+  --color-aura-orange: #EA580C;
+
+  --map-grid-color: rgba(37, 99, 235, 0.04);
+}
+
+.dark {
+  /* Dark Mode values */
+  --color-aura-deep: #080C14;
+  --color-aura-card: #0D1A2E;
+  --color-aura-input: #101C3A;
+  --color-aura-border: #1A2840;
+  --color-aura-text: #C8D8FF;
+  --color-aura-muted: #5A7AAA;
+  
+  --color-aura-blue: #3A6BFF;
+  --color-aura-purple: #B06AFF;
+  --color-aura-cyan: #22B8C9;
+  --color-aura-green: #22C97A;
+  --color-aura-orange: #FF6B35;
+
+  --map-grid-color: rgba(58, 107, 255, 0.03);
+}
+
+@layer base {
+  body {
+    background-color: #030508; /* Deep black space surrounding the app on desktop */
+    color: var(--color-aura-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease;
+  }
+  
+  body.light-theme-bg {
+    background-color: #DDE4EE;
+  }
+}
+
+/* Custom scrollbar and utilities for the UI */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-aura-deep);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-aura-border);
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-aura-blue);
+}
+
+/* Glowing text and effects */
+.glow-blue {
+  text-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+.glow-purple {
+  text-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+}
+.glow-cyan {
+  text-shadow: 0 0 10px rgba(8, 145, 178, 0.4);
+}
+.glow-green {
+  text-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
+}
+.glow-orange {
+  text-shadow: 0 0 10px rgba(234, 88, 12, 0.4);
+}
+
+.dark .glow-blue {
+  text-shadow: 0 0 10px rgba(58, 107, 255, 0.6);
+}
+.dark .glow-purple {
+  text-shadow: 0 0 12px rgba(176, 106, 255, 0.7);
+}
+.dark .glow-cyan {
+  text-shadow: 0 0 10px rgba(34, 184, 201, 0.6);
+}
+.dark .glow-green {
+  text-shadow: 0 0 10px rgba(34, 201, 122, 0.6);
+}
+.dark .glow-orange {
+  text-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+}
+
+.box-glow-blue {
+  box-shadow: 0 0 15px var(--color-aura-blue);
+}
+.box-glow-purple {
+  box-shadow: 0 0 18px var(--color-aura-purple);
+}
+.box-glow-cyan {
+  box-shadow: 0 0 15px var(--color-aura-cyan);
+}
+.box-glow-green {
+  box-shadow: 0 0 15px var(--color-aura-green);
+}
+.box-glow-orange {
+  box-shadow: 0 0 15px var(--color-aura-orange);
+}
+
+/* Custom CSS grid overlay background for the map container */
+.map-grid-bg {
+  background-image: 
+    linear-gradient(var(--map-grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--map-grid-color) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Custom styles for Google Maps custom dark styles overlay */
+.gm-style iframe + div { border: none !important; }
+
+/* Custom animation classes */
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.92); opacity: 0.9; box-shadow: 0 0 0 0 rgba(58, 107, 255, 0.4); }
+  70% { transform: scale(1.18); opacity: 0.1; box-shadow: 0 0 0 12px rgba(58, 107, 255, 0); }
+  100% { transform: scale(0.92); opacity: 0.9; box-shadow: 0 0 0 0 rgba(58, 107, 255, 0); }
+}
+
+@keyframes slide-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+/* Reset default styles from index.css template */
+#root {
+  all: unset;
+  display: block;
+}
+
+/* Utility to disable transition flickers temporarily */
+.no-transitions * {
+  transition: none !important;
+}
