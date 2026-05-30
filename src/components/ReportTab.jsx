@@ -20,12 +20,17 @@ export default function ReportTab({ draftReport, onSubmitReport, onClearDraft, i
   const [uploadFile, setUploadFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const [capturedImage, setCapturedImage] = useState(null);
+
   // Initialize form if prefilled from AI Scan draft
   useEffect(() => {
     if (draftReport) {
       setDescription(draftReport.description || '');
       setType(draftReport.type || 'Aerial');
       setSelectedBehaviors(draftReport.behaviors || []);
+      if (draftReport.image) {
+        setCapturedImage(draftReport.image);
+      }
       // Keep standard Roswell mock location if coming from scanner
       setLocationStr('33.3943° N, 104.5230° W');
       setLatLng({ lat: 33.3943, lng: -104.5230 });
@@ -74,7 +79,13 @@ export default function ReportTab({ draftReport, onSubmitReport, onClearDraft, i
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setUploadFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setUploadFile(file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCapturedImage(event.target.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -97,7 +108,8 @@ export default function ReportTab({ draftReport, onSubmitReport, onClearDraft, i
         lat: latLng.lat,
         lng: latLng.lng,
         behaviors: selectedBehaviors,
-        timestamp: timestamp
+        timestamp: timestamp,
+        image: capturedImage
       };
 
       onSubmitReport(newReport);
@@ -107,6 +119,7 @@ export default function ReportTab({ draftReport, onSubmitReport, onClearDraft, i
       setDescription('');
       setSelectedBehaviors([]);
       setUploadFile(null);
+      setCapturedImage(null);
     }, 1000);
   };
 
@@ -190,24 +203,66 @@ export default function ReportTab({ draftReport, onSubmitReport, onClearDraft, i
   const uploadInput = (
     <div>
       <label className="block text-xs font-semibold text-aura-muted uppercase tracking-wider mb-2">
-        Upload Image / Evidence
+        Sighting Visual Evidence (Zoomed 4x)
       </label>
-      <label className="flex flex-col items-center justify-center w-full h-24 rounded-lg border-2 border-dashed border-aura-border hover:border-aura-blue bg-aura-input transition-all cursor-pointer">
-        <div className="flex flex-col items-center justify-center pt-4 pb-4">
-          <Upload className="w-6 h-6 text-aura-muted mb-1.5" />
-          <p className="text-xs text-aura-text font-semibold">
-            {uploadFile ? uploadFile.name : 'Click to upload sighting photo'}
-          </p>
-          <p className="text-[10px] text-aura-muted mt-0.5">PNG, JPG or HEIC up to 10MB</p>
+      {capturedImage ? (
+        /* Zoomed Sighting Frame Preview */
+        <div className="relative border border-aura-border bg-black/60 rounded-lg overflow-hidden h-36 flex flex-col justify-end p-2.5 group select-none shadow-md">
+          {/* Zoomed Sighting Image */}
+          <img 
+            src={capturedImage} 
+            alt="Scanned Sighting Zoomed" 
+            className="absolute inset-0 w-full h-full object-cover scale-150 origin-center filter brightness-110 contrast-125 saturate-105"
+          />
+          {/* Target Reticle Crosshair */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="w-8 h-8 border border-dashed border-red-500/50 rounded-full animate-ping" style={{ animationDuration: '3.5s' }}></div>
+            <div className="w-4 h-4 border border-red-500/40 rounded-full"></div>
+            <div className="absolute w-8 h-px bg-red-500/30"></div>
+            <div className="absolute h-8 w-px bg-red-500/30"></div>
+          </div>
+          
+          {/* Zoom Indicator badge */}
+          <div className="absolute top-2.5 left-2.5 bg-red-650/90 text-red-200 border border-red-500/30 rounded px-1.5 py-0.5 text-[8px] font-mono flex items-center gap-1 z-10 animate-pulse">
+            <span className="w-1 h-1 rounded-full bg-red-500"></span>
+            <span>ZOOM LEVEL: 4.0X OPTICAL LOCK</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setCapturedImage(null);
+              setUploadFile(null);
+            }}
+            className="absolute top-2.5 right-2.5 bg-black/75 hover:bg-black/90 text-white/80 hover:text-white border border-aura-border rounded px-1.5 py-0.5 text-[8px] font-mono z-20 cursor-pointer transition-colors"
+          >
+            REMOVE IMAGE
+          </button>
+          
+          <div className="relative z-10 bg-black/70 border border-aura-border/40 px-2 py-1 rounded text-[8px] font-mono text-white/90 flex justify-between">
+            <span>RESOLVED AT SECURE CHANNEL</span>
+            <span>GRID_ALIGN: OK</span>
+          </div>
         </div>
-        <input
-          id="report-file-input"
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-      </label>
+      ) : (
+        /* Regular upload box */
+        <label className="flex flex-col items-center justify-center w-full h-24 rounded-lg border-2 border-dashed border-aura-border hover:border-aura-blue bg-aura-input transition-all cursor-pointer">
+          <div className="flex flex-col items-center justify-center pt-4 pb-4">
+            <Upload className="w-6 h-6 text-aura-muted mb-1.5" />
+            <p className="text-xs text-aura-text font-semibold">
+              {uploadFile ? uploadFile.name : 'Click to upload sighting photo'}
+            </p>
+            <p className="text-[10px] text-aura-muted mt-0.5">PNG, JPG or HEIC up to 10MB</p>
+          </div>
+          <input
+            id="report-file-input"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </label>
+      )}
     </div>
   );
 

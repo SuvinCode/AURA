@@ -9,4 +9,9 @@ export default defineConfig({
       'react-native': 'react-native-web',
     },
   },
+  server: {
+    watch: {
+      ignored: ['**/backend/**', '**/venv/**']
+    }
+  }
 })

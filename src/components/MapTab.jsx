@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, RefreshCw } from 'lucide-react';
+import { Compass, RefreshCw, Navigation } from 'lucide-react';
 
 const darkMapStyle = [
   { elementType: "geometry", stylers: [{ color: "#080C14" }] },
@@ -100,6 +100,24 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
   const [selectedReport, setSelectedReport] = useState(null);
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
   const [googleMapsError, setGoogleMapsError] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+
+  // Fetch current GPS location on mount for navigation origin
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          });
+        },
+        (err) => {
+          console.warn('Geolocation navigation unavailable:', err);
+        }
+      );
+    }
+  }, []);
 
   // Roswell center coordinates
   const defaultCenter = { lat: 33.3943, lng: -104.5230 };
@@ -212,8 +230,14 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
   // Center button handler
   const handleCenter = () => {
     if (googleMapsLoaded && googleMapInstanceRef.current) {
-      googleMapInstanceRef.current.panTo(defaultCenter);
-      googleMapInstanceRef.current.setZoom(13);
+      if (filteredReports.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        filteredReports.forEach(r => bounds.extend({ lat: r.lat, lng: r.lng }));
+        googleMapInstanceRef.current.fitBounds(bounds);
+      } else {
+        googleMapInstanceRef.current.panTo(defaultCenter);
+        googleMapInstanceRef.current.setZoom(3);
+      }
     }
   };
 
@@ -250,31 +274,42 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
             <p>LAT: 33.3943° N / LNG: -104.5230° W</p>
           </div>
 
-          {/* Mock Pins Scattered on CSS Grid */}
-          {filteredReports.map((report) => {
-            const dLat = report.lat - defaultCenter.lat;
-            const dLng = report.lng - defaultCenter.lng;
-            const topPct = 50 - dLat * 180;
-            const leftPct = 50 + dLng * 180;
+          {/* Mock Pins Scattered on CSS Grid (dynamically projected) */}
+          {(() => {
+            if (filteredReports.length === 0) return null;
 
-            let colorClass = 'bg-[#3A6BFF] box-glow-blue'; 
-            if (report.tag === 'Unidentified') colorClass = 'bg-[#B06AFF] box-glow-purple';
-            else if (report.tag === 'Aerial' || report.tag === 'Aerial Sighting') colorClass = 'bg-[#22B8C9] box-glow-cyan';
-            else if (report.tag === 'Land' || report.tag === 'Land Sighting') colorClass = 'bg-[#22C97A] box-glow-green';
-            else if (report.tag === 'Alert' || report.tag === 'High Activity') colorClass = 'bg-[#FF6B35] box-glow-orange';
+            let minLat = Math.min(...filteredReports.map(r => r.lat));
+            let maxLat = Math.max(...filteredReports.map(r => r.lat));
+            let minLng = Math.min(...filteredReports.map(r => r.lng));
+            let maxLng = Math.max(...filteredReports.map(r => r.lng));
 
-            return (
-              <button
-                key={report.id}
-                onClick={() => handleMockPinClick(report)}
-                className={`absolute w-4 h-4 rounded-full border-2 border-aura-card z-10 transition-transform active:scale-125 cursor-pointer ${colorClass}`}
-                style={{ top: `${topPct}%`, left: `${leftPct}%` }}
-                title={report.title}
-              >
-                <span className="absolute -inset-2 rounded-full border border-current opacity-30 animate-ping"></span>
-              </button>
-            );
-          })}
+            const latRange = maxLat - minLat || 0.1;
+            const lngRange = maxLng - minLng || 0.1;
+
+            return filteredReports.map((report) => {
+              // Normalize positions to fit beautifully within 15% to 85% of grid container
+              const topPct = 85 - ((report.lat - minLat) / latRange) * 70;
+              const leftPct = 15 + ((report.lng - minLng) / lngRange) * 70;
+
+              let colorClass = 'bg-[#3A6BFF] box-glow-blue'; 
+              if (report.tag === 'Unidentified') colorClass = 'bg-[#B06AFF] box-glow-purple';
+              else if (report.tag === 'Aerial' || report.tag === 'Aerial Sighting') colorClass = 'bg-[#22B8C9] box-glow-cyan';
+              else if (report.tag === 'Land' || report.tag === 'Land Sighting') colorClass = 'bg-[#22C97A] box-glow-green';
+              else if (report.tag === 'Alert' || report.tag === 'High Activity') colorClass = 'bg-[#FF6B35] box-glow-orange';
+
+              return (
+                <button
+                  key={report.id}
+                  onClick={() => handleMockPinClick(report)}
+                  className={`absolute w-4 h-4 rounded-full border-2 border-aura-card z-10 transition-transform active:scale-125 cursor-pointer ${colorClass}`}
+                  style={{ top: `${topPct}%`, left: `${leftPct}%` }}
+                  title={report.title}
+                >
+                  <span className="absolute -inset-2 rounded-full border border-current opacity-30 animate-ping"></span>
+                </button>
+              );
+            });
+          })()}
 
           {/* Map Loading Info Overlay */}
           {!googleMapsError && (
@@ -333,14 +368,63 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
               </span>
             </div>
 
+            {selectedReport.image && (
+              <div className="relative border border-aura-border bg-black/40 rounded-lg overflow-hidden h-28 mb-3 flex flex-col justify-end p-1.5 select-none">
+                <img 
+                  src={selectedReport.image} 
+                  alt="Sighting Zoomed" 
+                  className="absolute inset-0 w-full h-full object-cover scale-150 origin-center filter brightness-110 contrast-125"
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <div className="w-6 h-6 border border-dashed border-red-500/40 rounded-full"></div>
+                  <div className="absolute w-8 h-px bg-red-500/20"></div>
+                  <div className="absolute h-8 w-px bg-red-500/20"></div>
+                </div>
+                <div className="absolute top-1.5 left-1.5 bg-black/75 border border-aura-border/40 rounded px-1 py-0.5 text-[7px] font-mono text-aura-cyan z-10">
+                  ZOOM: 4.0X
+                </div>
+              </div>
+            )}
+
             <p className="text-xs text-aura-text/90 leading-relaxed mb-3.5 line-clamp-3">
               {selectedReport.description}
             </p>
 
-            <div className="flex justify-between items-center text-[10px] text-aura-muted border-t border-aura-border/50 pt-2 font-mono">
+            <div className="flex justify-between items-center text-[10px] text-aura-muted border-t border-aura-border/50 pt-2 font-mono mb-2.5">
               <span>⌛ {selectedReport.time}</span>
               <span>📍 {selectedReport.distance}</span>
             </div>
+
+            <button
+              onClick={() => {
+                const destLat = selectedReport.lat;
+                const destLng = selectedReport.lng;
+
+                const openMaps = (lat, lng) => {
+                  const originParam = lat !== null && lng !== null ? `&origin=${lat},${lng}` : '';
+                  const url = `https://www.google.com/maps/dir/?api=1${originParam}&destination=${destLat},${destLng}`;
+                  window.open(url, '_blank');
+                };
+
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                      openMaps(pos.coords.latitude, pos.coords.longitude);
+                    },
+                    () => {
+                      // Fallback: Omit origin so Google Maps automatically routes from "Your location"
+                      openMaps(null, null);
+                    },
+                    { enableHighAccuracy: true, timeout: 3000 }
+                  );
+                } else {
+                  openMaps(null, null);
+                }
+              }}
+              className="w-full py-2 bg-aura-blue text-white rounded-lg text-xs font-semibold font-mono tracking-wider transition-all hover:bg-opacity-95 flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer shadow-md shadow-aura-blue/15"
+            >
+              <Navigation className="w-3.5 h-3.5" /> NAVIGATE IN GOOGLE MAPS
+            </button>
 
             {/* Close button inside card */}
             <button
@@ -427,9 +511,16 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
                         </span>
                       </div>
                       
-                      <p className="text-[11px] text-aura-muted leading-relaxed line-clamp-2">
-                        {report.description}
-                      </p>
+                      <div className="flex gap-2.5 items-start">
+                        {report.image && (
+                          <div className="w-14 h-14 rounded-lg overflow-hidden border border-aura-border/50 bg-black flex-shrink-0 relative">
+                            <img src={report.image} alt="Thumbnail" className="w-full h-full object-cover scale-125" />
+                          </div>
+                        )}
+                        <p className="text-[11px] text-aura-muted leading-relaxed line-clamp-2 flex-1">
+                          {report.description}
+                        </p>
+                      </div>
 
                       <div className="flex justify-between items-center text-[9px] text-aura-muted font-mono pt-1.5 border-t border-aura-border/20 mt-1">
                         <span>⌛ {report.time}</span>
