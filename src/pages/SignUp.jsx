@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AuraLogo } from './Landing';
+import { register } from '../api';
 
 export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
   const [username, setUsername] = useState('');
@@ -8,27 +9,39 @@ export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      setError('Please fill in all required fields.');
+    if (!username || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields.');
       return;
     }
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
-    // Simulate successful sign up
-    onSignIn({ 
-      email, 
-      username: username.trim() || 'Anonymous User', 
-      isAnonymous: !username.trim() 
-    });
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const result = await register(username, email, password);
+      onSignIn(
+        { id: result.user.id, username: result.user.username, email: result.user.email },
+        result.access_token,
+      );
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAnonymous = () => {
-    onSignIn({ email: 'anonymous@aura.archive', username: 'Anonymous User', isAnonymous: true });
+    onSignIn({ username: 'Anonymous', isAnonymous: true }, null);
   };
 
   const formCard = (
@@ -59,11 +72,9 @@ export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <div className="flex justify-between items-center mb-1">
-            <label className="block text-xs font-semibold text-aura-muted uppercase tracking-wider" htmlFor="username">
-              Username <span className="text-[9px] text-aura-muted/70 lowercase font-normal">(optional)</span>
-            </label>
-          </div>
+          <label className="block text-xs font-semibold text-aura-muted uppercase tracking-wider mb-1.5" htmlFor="username">
+            Username
+          </label>
           <input
             id="username"
             type="text"
@@ -71,10 +82,8 @@ export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
             onChange={(e) => setUsername(e.target.value)}
             className="w-full px-3.5 py-2 rounded-lg bg-aura-input border border-aura-border text-aura-text placeholder-aura-muted/50 focus:outline-none focus:border-aura-blue transition-all text-sm"
             placeholder="e.g. ObserverX"
+            required
           />
-          <p className="text-[10px] text-aura-muted mt-1 italic">
-            Leave blank to stay fully anonymous
-          </p>
         </div>
 
         <div>
@@ -125,9 +134,13 @@ export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
         <button
           id="signup-submit"
           type="submit"
-          className="w-full py-2.5 px-4 rounded-lg bg-aura-blue hover:bg-opacity-90 text-white font-semibold transition-all duration-200 shadow-md shadow-aura-blue/25 active:scale-[0.98] cursor-pointer mt-2"
+          disabled={loading}
+          className="w-full py-2.5 px-4 rounded-lg bg-aura-blue hover:bg-opacity-90 text-white font-semibold transition-all duration-200 shadow-md shadow-aura-blue/25 active:scale-[0.98] cursor-pointer mt-2 disabled:opacity-60 flex items-center justify-center gap-2"
         >
-          Create Account
+          {loading
+            ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Creating...</>
+            : 'Create Account'
+          }
         </button>
       </form>
 

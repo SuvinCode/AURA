@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import { getMe, getReports, submitReport as apiSubmitReport, normaliseApiReport } from './api';
 
 const INITIAL_REPORTS = [
   {
@@ -318,10 +319,19 @@ function useLocalStorage(key, defaultValue) {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [theme, setTheme]     = useLocalStorage('aura:theme', 'dark');
-  const [user, setUser]       = useLocalStorage('aura:user', null);
-  const [reports, setReports] = useLocalStorage('aura:reports', INITIAL_REPORTS);
+  const [theme, setTheme]   = useLocalStorage('aura:theme', 'dark');
+  const [user, setUser]     = useLocalStorage('aura:user', null);
+  const [token, setToken]   = useLocalStorage('aura:token', null);
+
+  // Reports from the API (authenticated crowd-sourced sightings)
+  const [apiReports, setApiReports] = useState([]);
+  // Reports submitted while anonymous (local only)
+  const [localReports, setLocalReports] = useLocalStorage('aura:local-reports', []);
+
   const [draftReport, setDraftReport] = useState(null);
+
+  // Combined reports: API first, then local anonymous, then seeded historical data
+  const reports = [...apiReports, ...localReports, ...INITIAL_REPORTS];
 
   // Responsive state
   const [isWidescreen, setIsWidescreen] = useState(window.innerWidth >= 1024);
@@ -344,25 +354,62 @@ export default function App() {
     }
   }, [theme]);
 
-  // Authentication Flow Handlers
-  const handleSignIn = (userData) => {
+  // ── Restore session + fetch API reports on mount ──────────────────────────
+  useEffect(() => {
+    if (!token) return;
+    // Validate token is still valid
+    getMe(token)
+      .then(u => setUser({ id: u.id, username: u.username, email: u.email }))
+      .catch(() => { setToken(null); setUser(null); });
+  }, []);
+
+  // Fetch API reports whenever token changes
+  useEffect(() => {
+    if (!token) { setApiReports([]); return; }
+    getReports()
+      .then(data => setApiReports(data.map(normaliseApiReport)))
+      .catch(() => setApiReports([]));
+  }, [token]);
+
+  // ── Auth handlers ──────────────────────────────────────────────────────────
+  const handleSignIn = (userData, authToken) => {
     setUser(userData);
+    setToken(authToken || null);
     setCurrentPage('dashboard');
   };
 
   const handleSignOut = () => {
     setUser(null);
+    setToken(null);
+    setApiReports([]);
     setDraftReport(null);
     setCurrentPage('landing');
   };
 
-  // Report Flow Handlers
-  const handleSubmitReport = (newReport) => {
-    setReports(prev => [newReport, ...prev]);
+  // ── Report handlers ────────────────────────────────────────────────────────
+  const handleSubmitReport = async (newReport) => {
+    if (token) {
+      try {
+        await apiSubmitReport(token, newReport);
+        // Refresh API reports so the new one shows immediately
+        const data = await getReports();
+        setApiReports(data.map(normaliseApiReport));
+      } catch {
+        // API failed — fall back to local
+        setLocalReports(prev => [{ ...newReport, id: `local-${Date.now()}` }, ...prev]);
+      }
+    } else {
+      setLocalReports(prev => [{ ...newReport, id: `local-${Date.now()}` }, ...prev]);
+    }
   };
 
   const handleResetReports = () => {
-    setReports(INITIAL_REPORTS);
+    setLocalReports([]);
+    if (token) {
+      getReports()
+        .then(data => setApiReports(data.map(normaliseApiReport)))
+        .catch(() => setApiReports([]));
+    }
   };
 
   const handleAutoReport = (draftData) => {

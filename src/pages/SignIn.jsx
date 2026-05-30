@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import { AuraLogo } from './Landing';
+import { login } from '../api';
 
 export default function SignIn({ onNavigate, onSignIn, isLaptopDimensions, theme }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const isDark = theme === 'dark';
   const themeStyles = isDark ? darkTheme : lightTheme;
 
-  const handleSubmit = () => {
-    if (!email || !password) {
+  const handleSubmit = async () => {
+    if (!username || !password) {
       setError('Please fill in all fields.');
       return;
     }
-    // Simulate successful sign in
-    onSignIn({ email, username: email.split('@')[0] });
+    setError('');
+    setLoading(true);
+    try {
+      const result = await login(username, password);
+      onSignIn(
+        { id: result.user.id, username: result.user.username, email: result.user.email },
+        result.access_token,
+      );
+    } catch (err) {
+      setError(err.message || 'Sign in failed. Check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAnonymous = () => {
-    onSignIn({ email: 'anonymous@aura.archive', username: 'Anonymous User', isAnonymous: true });
+    onSignIn({ username: 'Anonymous', isAnonymous: true }, null);
   };
 
   const formCard = (
@@ -43,15 +56,15 @@ export default function SignIn({ onNavigate, onSignIn, isLaptopDimensions, theme
 
       {/* Inputs */}
       <View style={styles.formGroup}>
-        <Text style={[styles.label, themeStyles.textMuted]}>Email Address</Text>
+        <Text style={[styles.label, themeStyles.textMuted]}>Username</Text>
         <TextInput
           style={[styles.input, themeStyles.inputBg, themeStyles.inputBorder, themeStyles.textMain]}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="e.g. pilot-71@aura.archive"
+          value={username}
+          onChangeText={setUsername}
+          placeholder="e.g. ObserverX"
           placeholderTextColor={isDark ? '#5a7aaa' : '#94a3b8'}
-          keyboardType="email-address"
           autoCapitalize="none"
+          autoCorrect={false}
         />
       </View>
 
@@ -68,12 +81,16 @@ export default function SignIn({ onNavigate, onSignIn, isLaptopDimensions, theme
         />
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         id="signin-submit"
-        onPress={handleSubmit} 
-        style={styles.btnSubmit}
+        onPress={handleSubmit}
+        disabled={loading}
+        style={[styles.btnSubmit, loading && { opacity: 0.7 }]}
       >
-        <Text style={styles.btnSubmitText}>Sign In</Text>
+        {loading
+          ? <ActivityIndicator size="small" color="#ffffff" />
+          : <Text style={styles.btnSubmitText}>Sign In</Text>
+        }
       </TouchableOpacity>
 
       {/* Divider */}
