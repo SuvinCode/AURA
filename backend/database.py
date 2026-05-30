@@ -4,6 +4,12 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is not set. "
+        "Make sure the aura-db database is linked to this service in Render."
+    )
+
 # Render provides postgres:// but SQLAlchemy 2 needs postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)

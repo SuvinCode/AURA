@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -14,10 +15,15 @@ from auth import (
     get_current_user, get_optional_user,
 )
 
-# ── Create tables on startup ──────────────────────────────────────────────────
-Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="AURA API", version="1.0.0")
+# ── Create tables after the event loop starts (safe with Render cold-start) ──
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="AURA API", version="1.0.0", lifespan=lifespan)
 
 # ── CORS — allow the Render static site + local dev ───────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
