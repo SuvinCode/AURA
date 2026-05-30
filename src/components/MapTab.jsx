@@ -168,6 +168,19 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
             className={`absolute bottom-4 left-4 ${isLaptopDimensions ? 'right-16 max-w-sm' : 'right-4'} bg-aura-card border border-aura-border rounded-xl p-4 shadow-2xl flex flex-col`}
             style={{ zIndex: 1001 }}
           >
+            {/* Mobile-only back button */}
+            {!isLaptopDimensions && (
+              <button
+                onClick={() => setSelectedReport(null)}
+                className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-aura-muted hover:text-aura-text mb-3 cursor-pointer w-fit"
+              >
+                <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none">
+                  <path d="M8 2L4 6L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                BACK TO MAP
+              </button>
+            )}
+
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h4 className="font-bold text-aura-text text-sm">{selectedReport.title}</h4>
@@ -219,13 +232,16 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
               <Navigation className="w-3.5 h-3.5" /> NAVIGATE IN GOOGLE MAPS
             </button>
 
-            <button
-              onClick={() => setSelectedReport(null)}
-              className="absolute top-2 right-2 text-aura-muted hover:text-aura-text text-xs font-bold w-5 h-5 flex items-center justify-center hover:bg-aura-input rounded-full cursor-pointer"
-              style={{ zIndex: 1002 }}
-            >
-              ✕
-            </button>
+            {/* Desktop-only close ✕ */}
+            {isLaptopDimensions && (
+              <button
+                onClick={() => setSelectedReport(null)}
+                className="absolute top-2 right-2 text-aura-muted hover:text-aura-text text-xs font-bold w-5 h-5 flex items-center justify-center hover:bg-aura-input rounded-full cursor-pointer"
+                style={{ zIndex: 1002 }}
+              >
+                ✕
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
