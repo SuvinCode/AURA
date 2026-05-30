@@ -2,7 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root, .dark {
+  /* Dark Mode values (Default) */
+  --color-aura-deep: #080C14;
+  --color-aura-card: #0D1A2E;
+  --color-aura-input: #101C3A;
+  --color-aura-border: #1A2840;
+  --color-aura-text: #C8D8FF;
+  --color-aura-muted: #5A7AAA;
+  
+  --color-aura-blue: #3A6BFF;
+  --color-aura-purple: #B06AFF;
+  --color-aura-cyan: #22B8C9;
+  --color-aura-green: #22C97A;
+  --color-aura-orange: #FF6B35;
+
+  --map-grid-color: rgba(58, 107, 255, 0.03);
+}
+
+.light {
   /* Light Mode values */
   --color-aura-deep: #F3F6FC;     /* soft bright background */
   --color-aura-card: #FFFFFF;     /* pure white card */
@@ -18,24 +36,6 @@
   --color-aura-orange: #EA580C;
 
   --map-grid-color: rgba(37, 99, 235, 0.04);
-}
-
-.dark {
-  /* Dark Mode values */
-  --color-aura-deep: #080C14;
-  --color-aura-card: #0D1A2E;
-  --color-aura-input: #101C3A;
-  --color-aura-border: #1A2840;
-  --color-aura-text: #C8D8FF;
-  --color-aura-muted: #5A7AAA;
-  
-  --color-aura-blue: #3A6BFF;
-  --color-aura-purple: #B06AFF;
-  --color-aura-cyan: #22B8C9;
-  --color-aura-green: #22C97A;
-  --color-aura-orange: #FF6B35;
-
-  --map-grid-color: rgba(58, 107, 255, 0.03);
 }
 
 @layer base {
@@ -70,35 +70,35 @@
 
 /* Glowing text and effects */
 .glow-blue {
-  text-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-}
-.glow-purple {
-  text-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
-}
-.glow-cyan {
-  text-shadow: 0 0 10px rgba(8, 145, 178, 0.4);
-}
-.glow-green {
-  text-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
-}
-.glow-orange {
-  text-shadow: 0 0 10px rgba(234, 88, 12, 0.4);
-}
-
-.dark .glow-blue {
   text-shadow: 0 0 10px rgba(58, 107, 255, 0.6);
 }
-.dark .glow-purple {
+.glow-purple {
   text-shadow: 0 0 12px rgba(176, 106, 255, 0.7);
 }
-.dark .glow-cyan {
+.glow-cyan {
   text-shadow: 0 0 10px rgba(34, 184, 201, 0.6);
 }
-.dark .glow-green {
+.glow-green {
   text-shadow: 0 0 10px rgba(34, 201, 122, 0.6);
 }
-.dark .glow-orange {
+.glow-orange {
   text-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+}
+
+.light .glow-blue {
+  text-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+.light .glow-purple {
+  text-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+}
+.light .glow-cyan {
+  text-shadow: 0 0 10px rgba(8, 145, 178, 0.4);
+}
+.light .glow-green {
+  text-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
+}
+.light .glow-orange {
+  text-shadow: 0 0 10px rgba(234, 88, 12, 0.4);
 }
 
 .box-glow-blue {

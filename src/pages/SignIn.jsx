@@ -9,7 +9,7 @@ export default function SignIn({ onNavigate, onSignIn, isLaptopDimensions, theme
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const isDark = theme === 'dark';
+  const isDark = theme !== 'light';
   const themeStyles = isDark ? darkTheme : lightTheme;
 
   const handleSubmit = async () => {

@@ -429,7 +429,7 @@ export default function App() {
       case 'landing':
         return <Landing onNavigate={setCurrentPage} isLaptopDimensions={isLaptopDimensions} />;
       case 'signin':
-        return <SignIn onNavigate={setCurrentPage} onSignIn={handleSignIn} isLaptopDimensions={isLaptopDimensions} />;
+        return <SignIn onNavigate={setCurrentPage} onSignIn={handleSignIn} isLaptopDimensions={isLaptopDimensions} theme={theme} />;
       case 'signup':
         return <SignUp onNavigate={setCurrentPage} onSignIn={handleSignIn} isLaptopDimensions={isLaptopDimensions} />;
       case 'dashboard':
@@ -454,7 +454,7 @@ export default function App() {
   };
 
   const appContent = (
-    <div className={`w-full min-h-screen flex flex-col relative overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'dark' : ''} bg-aura-deep`}>
+    <div className={`w-full min-h-screen flex flex-col relative overflow-hidden transition-colors duration-300 ${theme === 'light' ? 'light' : 'dark'} bg-aura-deep`}>
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPage}
