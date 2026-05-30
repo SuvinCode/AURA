@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Navigation } from 'lucide-react';
+import { Navigation, List, X } from 'lucide-react';
 
 const ROSWELL = [33.3943, -104.523];
 
@@ -72,6 +72,7 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedReport, setSelectedReport] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+  const [showArchive, setShowArchive] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -303,23 +304,165 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
   // Mobile layout
   return (
     <div className="absolute inset-0 bg-aura-deep text-aura-text transition-colors duration-300">
-      <div className="absolute top-3 left-3 right-3 z-[1000] flex gap-1.5 overflow-x-auto pb-2 scrollbar-none select-none">
-        {['All', 'Unidentified', 'Aerial', 'Land', 'Last 24h'].map(filter => (
-          <button
-            key={filter}
-            onClick={() => { setActiveFilter(filter); setSelectedReport(null); }}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border font-mono cursor-pointer ${
-              activeFilter === filter
-                ? 'bg-aura-blue text-white border-aura-blue shadow-lg shadow-aura-blue/20'
-                : 'bg-aura-card/90 backdrop-blur-md text-aura-muted border-aura-border hover:text-aura-text'
-            }`}
+
+      {/* Filter chips — only visible when archive drawer is closed */}
+      <AnimatePresence>
+        {!showArchive && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="absolute top-3 left-3 right-3 flex gap-1.5 overflow-x-auto pb-2 scrollbar-none select-none"
+            style={{ zIndex: 1000 }}
           >
-            {filter}
-          </button>
-        ))}
-      </div>
+            {['All', 'Unidentified', 'Aerial', 'Land', 'Last 24h'].map(filter => (
+              <button
+                key={filter}
+                onClick={() => { setActiveFilter(filter); setSelectedReport(null); }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border font-mono cursor-pointer ${
+                  activeFilter === filter
+                    ? 'bg-aura-blue text-white border-aura-blue shadow-lg shadow-aura-blue/20'
+                    : 'bg-aura-card/90 backdrop-blur-md text-aura-muted border-aura-border'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {mapElement}
+
+      {/* Floating Archive button */}
+      <AnimatePresence>
+        {!showArchive && !selectedReport && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            onClick={() => setShowArchive(true)}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 rounded-full bg-aura-card border border-aura-border shadow-xl text-xs font-semibold font-mono text-aura-text cursor-pointer active:scale-95 transition-transform"
+            style={{ zIndex: 1001 }}
+          >
+            <List className="w-3.5 h-3.5 text-aura-blue" />
+            ANOMALOUS ARCHIVE
+            <span className="ml-0.5 px-1.5 py-0.5 rounded-full bg-aura-blue/20 text-aura-blue text-[10px]">
+              {filteredReports.length}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom sheet archive drawer */}
+      <AnimatePresence>
+        {showArchive && (
+          <>
+            {/* Scrim */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+              style={{ zIndex: 1100 }}
+              onClick={() => setShowArchive(false)}
+            />
+
+            {/* Drawer */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 260 }}
+              className="absolute bottom-0 left-0 right-0 bg-aura-card border-t border-aura-border rounded-t-2xl flex flex-col"
+              style={{ zIndex: 1101, height: '72%' }}
+            >
+              {/* Handle + header */}
+              <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-aura-border/50 flex-shrink-0">
+                <div>
+                  <h2 className="text-sm font-bold text-aura-text">Anomalous Archive</h2>
+                  <p className="text-[10px] text-aura-muted font-mono">
+                    {filteredReports.length} signal{filteredReports.length !== 1 ? 's' : ''} found
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowArchive(false)}
+                  className="w-7 h-7 rounded-full bg-aura-input border border-aura-border flex items-center justify-center text-aura-muted hover:text-aura-text cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Filter chips */}
+              <div className="flex gap-1.5 px-4 py-3 overflow-x-auto scrollbar-none flex-shrink-0">
+                {['All', 'Unidentified', 'Aerial', 'Land', 'Last 24h'].map(filter => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap border font-mono transition-all cursor-pointer ${
+                      activeFilter === filter
+                        ? 'bg-aura-blue text-white border-aura-blue'
+                        : 'bg-aura-input text-aura-muted border-aura-border'
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+
+              {/* Report list */}
+              <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-2.5">
+                {filteredReports.length === 0 ? (
+                  <div className="py-10 text-center text-xs text-aura-muted font-mono border border-dashed border-aura-border/60 rounded-lg">
+                    No records matching search.
+                  </div>
+                ) : (
+                  filteredReports.map(report => {
+                    const color = tagColor(report.tag);
+                    return (
+                      <button
+                        key={report.id}
+                        onClick={() => {
+                          setSelectedReport(report);
+                          setShowArchive(false);
+                        }}
+                        className="w-full text-left p-3.5 rounded-xl border border-aura-border/40 bg-aura-deep/60 transition-all cursor-pointer flex flex-col gap-1.5 active:scale-[0.98]"
+                      >
+                        <div className="flex justify-between items-start gap-2">
+                          <span className="font-bold text-xs text-aura-text line-clamp-1 flex-1 leading-tight">{report.title}</span>
+                          <span
+                            className="px-2 py-0.5 rounded text-[8px] font-semibold font-mono uppercase tracking-wider border flex-shrink-0"
+                            style={{ color, borderColor: `${color}40`, background: `${color}18` }}
+                          >
+                            {report.tag}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-2.5 items-start">
+                          {report.image && (
+                            <div className="w-12 h-12 rounded-lg overflow-hidden border border-aura-border/50 bg-black flex-shrink-0">
+                              <img src={report.image} alt="Thumbnail" className="w-full h-full object-cover scale-125" />
+                            </div>
+                          )}
+                          <p className="text-[11px] text-aura-muted leading-relaxed line-clamp-2 flex-1">
+                            {report.description}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[9px] text-aura-muted font-mono pt-1.5 border-t border-aura-border/20 mt-0.5">
+                          <span>⌛ {report.time}</span>
+                          <span>📍 {report.distance}</span>
+                        </div>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
