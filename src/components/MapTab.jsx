@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navigation, List, X } from 'lucide-react';
+import { haversineKm } from '../data/ufoSignatures';
+
+function formatDistance(km) {
+  if (km < 1)    return `${Math.round(km * 1000)} m away`;
+  if (km < 100)  return `${km.toFixed(1)} km away`;
+  if (km < 1000) return `${Math.round(km)} km away`;
+  return `${(km / 1000).toFixed(1)}k km away`;
+}
 
 const ROSWELL = [33.3943, -104.523];
 
@@ -83,16 +91,37 @@ export default function MapTab({ reports, theme, isLaptopDimensions }) {
     }
   }, []);
 
-  const filteredReports = reports.filter(report => {
-    if (activeFilter === 'All') return true;
-    if (activeFilter === 'Unidentified') return report.tag === 'Unidentified';
-    if (activeFilter === 'Aerial') return report.type === 'Aerial';
-    if (activeFilter === 'Land') return report.type === 'Land';
-    if (activeFilter === 'Last 24h') {
-      return report.time.includes('min') || report.time.includes('hour') || report.time.includes('hours');
+  // Attach real distance from user to every report, then filter + sort closest-first
+  const filteredReports = useMemo(() => {
+    const withDist = reports.map(report => {
+      const distKm = userLocation
+        ? haversineKm(userLocation.lat, userLocation.lng, report.lat, report.lng)
+        : null;
+      return {
+        ...report,
+        _distKm: distKm,
+        distance: distKm !== null ? formatDistance(distKm) : report.distance,
+      };
+    });
+
+    const filtered = withDist.filter(report => {
+      if (activeFilter === 'All') return true;
+      if (activeFilter === 'Unidentified') return report.tag === 'Unidentified';
+      if (activeFilter === 'Aerial') return report.type === 'Aerial';
+      if (activeFilter === 'Land') return report.type === 'Land';
+      if (activeFilter === 'Last 24h') {
+        return report.time.includes('min') || report.time.includes('hour') || report.time.includes('hours');
+      }
+      return true;
+    });
+
+    // Sort closest first; fall back to original order if no location yet
+    if (userLocation) {
+      filtered.sort((a, b) => (a._distKm ?? Infinity) - (b._distKm ?? Infinity));
     }
-    return true;
-  });
+
+    return filtered;
+  }, [reports, activeFilter, userLocation]);
 
   const handleNavigate = (report) => {
     const originParam = userLocation
