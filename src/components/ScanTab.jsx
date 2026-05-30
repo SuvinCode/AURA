@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, RefreshCw, AlertTriangle, CheckCircle, ChevronUp } from 'lucide-react';
 
@@ -7,6 +7,50 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
   const [captured, setCaptured] = useState(false);
   const [demoState, setDemoState] = useState('unidentified'); // 'identified' | 'unidentified'
   const [statusText, setStatusText] = useState('Scanning for objects...');
+
+  const [stream, setStream] = useState(null);
+  const [cameraError, setCameraError] = useState(null);
+  const videoRef = useRef(null);
+
+  // Initialize camera stream
+  useEffect(() => {
+    let activeStream = null;
+
+    async function enableCamera() {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        });
+        activeStream = mediaStream;
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      } catch (err) {
+        console.warn('Error accessing camera, falling back to CSS simulator:', err);
+        setCameraError(err.message || 'Camera access denied');
+      }
+    }
+
+    if (isScanning && !captured) {
+      enableCamera();
+    }
+
+    return () => {
+      if (activeStream) {
+        activeStream.getTracks().forEach(track => track.stop());
+      }
+      setStream(null);
+    };
+  }, [isScanning, captured]);
+
+  // Handle binding stream when the videoRef element mounts
+  useEffect(() => {
+    if (stream && videoRef.current && !videoRef.current.srcObject) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
 
   // Simple status bar animation
   useEffect(() => {
@@ -47,13 +91,26 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
   // Viewfinder markup snippet
   const viewfinderContent = (
     <div className="relative flex-1 min-h-[220px] rounded-xl bg-black border border-aura-border flex flex-col items-center justify-center overflow-hidden shadow-inner">
-      {/* CSS Camera Feed Mock: deep dark background with some noise/atmosphere */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10"></div>
-      <div className="absolute inset-0 opacity-20 pointer-events-none map-grid-bg"></div>
+      {/* Camera Video Stream */}
+      {stream ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        />
+      ) : (
+        /* CSS Camera Feed Mock: deep dark background with some noise/atmosphere */
+        <>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-0"></div>
+          <div className="absolute inset-0 opacity-20 pointer-events-none map-grid-bg z-0"></div>
+        </>
+      )}
 
       {/* Viewfinder Target Corner Brackets */}
       {!captured && (
-        <div className="absolute w-48 h-48 flex flex-col justify-between p-1 z-10">
+        <div className="absolute w-48 h-48 flex flex-col justify-between p-1 z-20">
           {/* Top Row Brackets */}
           <div className="flex justify-between">
             <div className="w-6 h-6 border-t-2 border-l-2 border-aura-blue rounded-tl-sm animate-pulse"></div>
@@ -62,18 +119,18 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
           {/* Bottom Row Brackets */}
           <div className="flex justify-between">
             <div className="w-6 h-6 border-b-2 border-l-2 border-aura-blue rounded-bl-sm animate-pulse"></div>
-            <div className="w-6 h-6 border-b-2 border-r-2 border-aura-blue rounded-br-sm animate-pulse"></div>
+            <div className="w-6 h-6 border-b-2 border-r-2 border-aura-blue rounded-tr-sm animate-pulse"></div>
           </div>
         </div>
       )}
 
       {/* Animated Pulse Ring inside the reticle */}
       {isScanning && (
-        <div className="absolute w-36 h-36 rounded-full border border-aura-blue/40 animate-pulse-ring pointer-events-none z-10"></div>
+        <div className="absolute w-36 h-36 rounded-full border border-aura-blue/40 animate-pulse-ring pointer-events-none z-20"></div>
       )}
 
       {/* Mock visual objects inside viewfinder */}
-      <div className="absolute z-0 flex flex-col items-center">
+      <div className="absolute z-10 flex flex-col items-center pointer-events-none">
         {demoState === 'unidentified' ? (
           /* A glowing purple orb */
           <div className={`w-6 h-6 bg-[#B06AFF] rounded-full filter blur-[3px] opacity-75 relative ${isScanning ? 'animate-bounce' : ''}`}>
@@ -100,7 +157,7 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-aura-card/85 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center p-6 text-center"
+            className="absolute inset-0 bg-aura-card/85 backdrop-blur-[2px] z-30 flex flex-col items-center justify-center p-6 text-center"
           >
             <div className={`p-3 rounded-full mb-3 ${demoState === 'unidentified' ? 'bg-aura-purple/15 text-aura-purple animate-pulse' : 'bg-aura-green/15 text-aura-green animate-pulse'}`}>
               {demoState === 'unidentified' ? <AlertTriangle className="w-8 h-8" /> : <CheckCircle className="w-8 h-8" />}
