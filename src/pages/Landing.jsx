@@ -77,10 +77,24 @@ export default function Landing({ onNavigate, isLaptopDimensions }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-aura-blue uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold font-mono mb-6"
+              className="text-aura-blue uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold font-mono mb-3"
             >
               Anonymous Unidentifiable Report Archive
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.38 }}
+              className="flex items-center gap-2 mb-6"
+            >
+              <span className="px-2.5 py-1 rounded-full bg-aura-orange/15 border border-aura-orange/40 text-aura-orange text-[10px] font-mono font-bold tracking-widest uppercase">
+                MVP
+              </span>
+              <span className="text-[10px] text-aura-muted font-mono">
+                Early prototype · Features are simulated · Not production-ready
+              </span>
+            </motion.div>
             
             <motion.h2 
               initial={{ opacity: 0, y: 10 }}
@@ -234,8 +248,11 @@ export default function Landing({ onNavigate, isLaptopDimensions }) {
       </div>
 
       {/* Footer */}
-      <footer className="text-center text-aura-muted text-[10px] py-6 border-t border-aura-border/40 font-mono">
-        © {new Date().getFullYear()} AURA · Anonymous Unidentifiable Report Archive. All rights reserved. Protected under Tactical Signal Protocols.
+      <footer className="text-center text-aura-muted text-[10px] py-6 border-t border-aura-border/40 font-mono space-y-1.5">
+        <p>© {new Date().getFullYear()} AURA · Anonymous Unidentifiable Report Archive. All rights reserved.</p>
+        <p className="text-aura-orange/70">
+          ⚠ MVP — This is an early-stage prototype. Auth, data, and scanner results are simulated. No real data is collected or stored server-side.
+        </p>
       </footer>
     </div>
   );
