@@ -102,6 +102,16 @@ export default function SignIn({ onNavigate, onSignIn, isLaptopDimensions, theme
           Don't have an account? <Text style={styles.toggleLinkHighlight}>Sign Up</Text>
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        id="link-back-landing"
+        onPress={() => onNavigate('landing')}
+        style={[styles.toggleLink, { marginTop: 12 }]}
+      >
+        <Text style={[styles.toggleLinkText, { color: '#3a6bff', fontWeight: 'bold' }]}>
+          ← Back to Landing Page
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 

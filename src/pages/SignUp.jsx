@@ -157,6 +157,16 @@ export default function SignUp({ onNavigate, onSignIn, isLaptopDimensions }) {
           Already have an account? <span className="text-aura-blue font-semibold">Sign In</span>
         </button>
       </div>
+
+      <div className="text-center mt-3">
+        <button
+          id="link-back-landing"
+          onClick={() => onNavigate('landing')}
+          className="text-xs text-aura-blue hover:text-opacity-80 font-semibold transition-colors cursor-pointer"
+        >
+          ← Back to Landing Page
+        </button>
+      </div>
     </motion.div>
   );
 
