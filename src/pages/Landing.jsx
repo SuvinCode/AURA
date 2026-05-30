@@ -138,6 +138,48 @@ export default function Landing({ onNavigate, isLaptopDimensions }) {
             </motion.div>
           </div>
 
+          {/* Account type comparison */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.72 }}
+            className={`w-full max-w-xs ${isLaptopDimensions ? '' : 'mx-auto'} rounded-xl border border-aura-border/60 overflow-hidden text-[11px] font-mono mb-8`}
+          >
+            {/* Header */}
+            <div className="grid grid-cols-2 text-center">
+              <div className="px-3 py-2 bg-aura-card/40 border-b border-r border-aura-border/60 text-aura-muted tracking-widest uppercase text-[9px]">
+                Anonymous
+              </div>
+              <div className="px-3 py-2 bg-aura-blue/10 border-b border-aura-border/60 text-aura-blue tracking-widest uppercase text-[9px] font-bold">
+                Real Account
+              </div>
+            </div>
+
+            {[
+              ['View archive',       true,  true ],
+              ['Submit sightings',   true,  true ],
+              ['Reports persist',    false, true ],
+              ['Shared with others', false, true ],
+              ['Session restored',   false, true ],
+              ['Database backed',    false, true ],
+            ].map(([label, anon, real]) => (
+              <div key={label} className="grid grid-cols-2 border-b border-aura-border/30 last:border-0">
+                <div className="flex items-center gap-2 px-3 py-2 bg-aura-card/20 border-r border-aura-border/30">
+                  <span className={anon ? 'text-aura-green' : 'text-aura-muted/40'}>
+                    {anon ? '✓' : '✗'}
+                  </span>
+                  <span className="text-aura-muted">{label}</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-aura-blue/5">
+                  <span className={real ? 'text-aura-green' : 'text-aura-muted/40'}>
+                    {real ? '✓' : '✗'}
+                  </span>
+                  <span className={real ? 'text-aura-text' : 'text-aura-muted'}>{label}</span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
           {/* Right/Feature Cards Side */}
           <div className={`w-full ${isLaptopDimensions ? 'lg:w-1/2 lg:flex lg:flex-col lg:gap-4' : 'max-w-md mx-auto'}`}>
             <motion.div 
