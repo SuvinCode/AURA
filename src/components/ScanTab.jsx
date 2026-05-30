@@ -340,15 +340,27 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
     if (stream || !modelReady || !isScanning || captured) return;
     let active = true;
     let frameId;
+
+    // Normal environment objects — low UAP probability
     const targets = [
-      { baseClass: 'person', label: 'HUMAN', type: 'living', x: 35, y: 35, w: 18, h: 40, speedX: 0.04, speedY: 0.02, phase: 0 },
-      { baseClass: 'laptop', label: 'LAPTOP', type: 'non-living', x: 62, y: 50, w: 20, h: 16, speedX: 0, speedY: 0, phase: 1.5 },
-      { baseClass: 'cell phone', label: 'MOBILE DEVICE', type: 'non-living', x: 15, y: 65, w: 9, h: 11, speedX: 0.05, speedY: 0.03, phase: 3.1 },
-      { baseClass: 'cup', label: 'CUP', type: 'non-living', x: 48, y: 60, w: 7, h: 9, speedX: 0.02, speedY: 0.01, phase: 0.5 },
+      { baseClass: 'person',     label: 'HUMAN / ORGANIC',    type: 'living',     x: 35, y: 30, w: 18, h: 42, speedX: 0.04, speedY: 0.02, phase: 0.0 },
+      { baseClass: 'laptop',     label: 'LAPTOP / TERMINAL',  type: 'non-living', x: 60, y: 48, w: 20, h: 16, speedX: 0.00, speedY: 0.00, phase: 1.5 },
+      { baseClass: 'cell phone', label: 'MOBILE DEVICE',      type: 'non-living', x: 15, y: 62, w: 9,  h: 11, speedX: 0.05, speedY: 0.03, phase: 3.1 },
+      { baseClass: 'cup',        label: 'CONTAINER',          type: 'non-living', x: 48, y: 58, w: 7,  h: 9,  speedX: 0.02, speedY: 0.01, phase: 0.5 },
+      { baseClass: 'clock',      label: 'DISC OBJECT',        type: 'non-living', x: 72, y: 20, w: 10, h: 10, speedX: 0.01, speedY: 0.01, phase: 2.0 },
+      { baseClass: 'bottle',     label: 'CYLINDRICAL OBJECT', type: 'non-living', x: 22, y: 40, w: 7,  h: 14, speedX: 0.02, speedY: 0.02, phase: 4.2 },
+      { baseClass: 'tv',         label: 'DISPLAY UNIT',       type: 'non-living', x: 55, y: 20, w: 22, h: 14, speedX: 0.00, speedY: 0.00, phase: 1.1 },
     ];
+
+    // Anomalous targets — high UAP probability, erratic movement
     const anomalyTargets = [
-      { baseClass: 'unknown', label: 'ANOMALOUS ORB', type: 'anomalous', x: 50, y: 20, w: 12, h: 12, speedX: 0.12, speedY: 0.10, phase: 0.8 },
-      { baseClass: 'kite', label: 'UNDETECTABLE', type: 'undetectable', x: 72, y: 12, w: 14, h: 14, speedX: 0.18, speedY: 0.15, phase: 2.2 },
+      { baseClass: 'unknown',      label: 'ANOMALOUS ORB',        type: 'anomalous',    x: 50, y: 18, w: 12, h: 12, speedX: 0.12, speedY: 0.10, phase: 0.8 },
+      { baseClass: 'kite',         label: 'UNDETECTABLE',         type: 'undetectable', x: 72, y: 12, w: 14, h: 14, speedX: 0.18, speedY: 0.15, phase: 2.2 },
+      { baseClass: 'sports ball',  label: 'SPHERICAL ANOMALY',    type: 'anomalous',    x: 28, y: 22, w: 11, h: 11, speedX: 0.14, speedY: 0.08, phase: 1.3 },
+      { baseClass: 'frisbee',      label: 'DISC FORMATION',       type: 'anomalous',    x: 60, y: 30, w: 15, h: 7,  speedX: 0.20, speedY: 0.06, phase: 3.5 },
+      { baseClass: 'umbrella',     label: 'CHEVRON STRUCTURE',    type: 'anomalous',    x: 42, y: 55, w: 18, h: 10, speedX: 0.09, speedY: 0.12, phase: 0.4 },
+      { baseClass: 'baseball bat', label: 'CYLINDER / CIGAR',     type: 'anomalous',    x: 20, y: 35, w: 8,  h: 22, speedX: 0.07, speedY: 0.16, phase: 5.1 },
+      { baseClass: 'unknown',      label: 'DARK TRIANGLE',        type: 'undetectable', x: 38, y: 10, w: 22, h: 14, speedX: 0.10, speedY: 0.05, phase: 1.9 },
     ];
     const tick = (ts) => {
       if (!active) return;
@@ -367,7 +379,7 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
     return () => { active = false; cancelAnimationFrame(frameId); };
   }, [stream, modelReady, isScanning, captured, demoState, userLocation]);
 
-  // Simple status bar animation
+  // Status bar cycling phrases
   useEffect(() => {
     if (!isScanning) return;
     const phrases = [
@@ -375,13 +387,20 @@ export default function ScanTab({ onAutoReport, theme, isLaptopDimensions }) {
       'Analyzing thermal signatures...',
       'Filtering atmospheric noise...',
       'Matching celestial models...',
-      'Tracking trajectory data...'
+      'Tracking trajectory vectors...',
+      'Cross-referencing NUFORC database...',
+      'Running edge contour analysis...',
+      'Checking UAP hotspot proximity...',
+      'Calibrating spectral filters...',
+      'Validating AARO classification schema...',
+      'Deep-scanning EM spectrum...',
+      'Triangulating anomaly coordinates...',
     ];
     let idx = 0;
     const interval = setInterval(() => {
       idx = (idx + 1) % phrases.length;
       setStatusText(phrases[idx]);
-    }, 3000);
+    }, 2800);
     return () => clearInterval(interval);
   }, [isScanning]);
 

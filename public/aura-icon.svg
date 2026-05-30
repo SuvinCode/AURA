@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#080C14"/>
+  <!-- outer dashed ring -->
+  <circle cx="256" cy="256" r="190" stroke="#3A6BFF" stroke-width="12" stroke-dasharray="40 25" fill="none" opacity="0.9"/>
+  <!-- middle ring -->
+  <circle cx="256" cy="256" r="130" stroke="#3A6BFF" stroke-width="4" fill="none" opacity="0.3"/>
+  <!-- inner filled core -->
+  <circle cx="256" cy="256" r="70" fill="#B06AFF" opacity="0.92"/>
+  <!-- glow -->
+  <circle cx="256" cy="256" r="70" fill="#B06AFF" opacity="0.25" filter="url(#glow)"/>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>

@@ -135,14 +135,192 @@ const INITIAL_REPORTS = [
     lng: -79.4589,
     behaviors: ["Silent"],
     image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><path d="M40 30 Q50 15 60 30 Q70 55 50 80 Q30 55 40 30 Z" stroke="%2322C97A" stroke-width="1.5" fill="none"/></svg>'
+  },
+  {
+    id: 11,
+    title: "USS Nimitz Tic-Tac (2004)",
+    description: "US Navy F/A-18 pilots intercepted a white, oblong object off the San Diego coast exhibiting instantaneous acceleration and trans-medium behaviour. Declassified FLIR footage confirmed. No known propulsion system.",
+    type: "Aerial",
+    tag: "Unidentified",
+    distance: "14800.2 km away",
+    time: "November 2004",
+    lat: 32.5000,
+    lng: -117.5000,
+    behaviors: ["Fast-moving", "Hovering", "Disappeared", "No Heat Sig"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="50" rx="28" ry="13" stroke="%23B06AFF" stroke-width="1.5" fill="none"/><ellipse cx="50" cy="50" rx="10" ry="5" fill="%23B06AFF" opacity="0.6"/><line x1="22" y1="50" x2="5" y2="50" stroke="%23B06AFF" stroke-dasharray="3 3" opacity="0.5"/><line x1="78" y1="50" x2="95" y2="50" stroke="%23B06AFF" stroke-dasharray="3 3" opacity="0.5"/></svg>'
+  },
+  {
+    id: 12,
+    title: "JAL Flight 1628 (1986)",
+    description: "Japan Air Lines Boeing 747 crew reported a massive craft — two times the size of an aircraft carrier — pacing them over Alaska for 50 minutes. FAA radar corroborated the encounter.",
+    type: "Aerial",
+    tag: "Alert",
+    distance: "8600.0 km away",
+    time: "November 1986",
+    lat: 61.2181,
+    lng: -154.4931,
+    behaviors: ["Hovering", "Lights", "Fast-moving"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><circle cx="50" cy="50" r="22" stroke="%23FF6B35" stroke-width="1.5" fill="none"/><circle cx="50" cy="50" r="8" fill="%23FF6B35" opacity="0.7"/><circle cx="50" cy="50" r="32" stroke="%23FF6B35" stroke-width="0.5" stroke-dasharray="4 4" fill="none" opacity="0.3"/></svg>'
+  },
+  {
+    id: 13,
+    title: "Stephenville Lights (2008)",
+    description: "Dozens of witnesses including a local pilot reported a massive silent craft a mile wide emitting intense white strobes over Stephenville, Texas. Military radar data later confirmed unknown objects.",
+    type: "Aerial",
+    tag: "Unidentified",
+    distance: "1640.5 km away",
+    time: "January 2008",
+    lat: 32.2209,
+    lng: -98.2025,
+    behaviors: ["Silent", "Lights", "Hovering"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><line x1="20" y1="50" x2="80" y2="50" stroke="%23B06AFF" stroke-width="1.5"/><circle cx="20" cy="50" r="4" fill="%23fff" opacity="0.9"/><circle cx="35" cy="50" r="4" fill="%23fff" opacity="0.9"/><circle cx="50" cy="50" r="5" fill="%23B06AFF" opacity="0.95"/><circle cx="65" cy="50" r="4" fill="%23fff" opacity="0.9"/><circle cx="80" cy="50" r="4" fill="%23fff" opacity="0.9"/></svg>'
+  },
+  {
+    id: 14,
+    title: "Coyne Helicopter (1973)",
+    description: "US Army Reserve helicopter crew experienced full loss of controls near Mansfield, Ohio when a grey metallic cigar-shaped craft locked onto their aircraft with a green beam, pulling them from 1700 ft to 3500 ft in seconds.",
+    type: "Aerial",
+    tag: "Aerial Sighting",
+    distance: "2050.3 km away",
+    time: "October 1973",
+    lat: 40.7989,
+    lng: -82.5151,
+    behaviors: ["Fast-moving", "Lights", "EM Interference"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><rect x="22" y="44" width="56" height="12" rx="6" stroke="%2322B8C9" stroke-width="1.5" fill="none"/><line x1="50" y1="44" x2="50" y2="25" stroke="%2322B8C9" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/></svg>'
+  },
+  {
+    id: 15,
+    title: "Trans-en-Provence (1981)",
+    description: "A French farmer witnessed a lead-grey craft land on his property in Provence. GEPAN (French government agency) collected physical evidence: scorched earth, broken branches, and residue confirmed by lab analysis.",
+    type: "Land",
+    tag: "Land Sighting",
+    distance: "8750.1 km away",
+    time: "January 1981",
+    lat: 43.6260,
+    lng: 6.1780,
+    behaviors: ["Silent", "Hovering", "Disappeared"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="48" rx="22" ry="9" stroke="%2322C97A" stroke-width="1.5" fill="none"/><ellipse cx="50" cy="45" rx="10" ry="6" stroke="%2322C97A" stroke-width="1" fill="none" opacity="0.5"/><line x1="28" y1="57" x2="72" y2="57" stroke="%2322C97A" stroke-width="1" opacity="0.4"/></svg>'
+  },
+  {
+    id: 16,
+    title: "Lonnie Zamora (1964)",
+    description: "New Mexico State Police officer Lonnie Zamora witnessed a white egg-shaped craft with red insignia land in a desert arroyo near Socorro. Landing struts and burnt vegetation were catalogued by FBI and Air Force investigators.",
+    type: "Land",
+    tag: "Land Sighting",
+    distance: "85.4 km away",
+    time: "April 1964",
+    lat: 34.0489,
+    lng: -106.8914,
+    behaviors: ["Silent", "Disappeared", "Lights"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="46" rx="18" ry="12" stroke="%2322C97A" stroke-width="1.5" fill="none"/><line x1="38" y1="58" x2="34" y2="70" stroke="%2322C97A" stroke-width="1.5"/><line x1="50" y1="58" x2="50" y2="70" stroke="%2322C97A" stroke-width="1.5"/><line x1="62" y1="58" x2="66" y2="70" stroke="%2322C97A" stroke-width="1.5"/><text x="50" y="44" font-size="8" fill="%2322C97A" text-anchor="middle" font-family="monospace" opacity="0.9">⊕</text></svg>'
+  },
+  {
+    id: 17,
+    title: "Frederick Valentich (1978)",
+    description: "Australian pilot Frederick Valentich reported being intercepted by a long metallic craft with green lights over Bass Strait. His final transmission was a loud metallic scraping sound. Neither the pilot nor the Cessna 182L were ever found.",
+    type: "Aerial",
+    tag: "Alert",
+    distance: "13900.7 km away",
+    time: "October 1978",
+    lat: -38.6000,
+    lng: 146.0000,
+    behaviors: ["Lights", "Fast-moving", "Disappeared", "EM Interference"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><circle cx="50" cy="50" r="28" stroke="%23FF3E3E" stroke-width="1.5" fill="none" stroke-dasharray="5 3"/><line x1="50" y1="22" x2="50" y2="78" stroke="%23FF3E3E" opacity="0.3"/><line x1="22" y1="50" x2="78" y2="50" stroke="%23FF3E3E" opacity="0.3"/><text x="50" y="55" font-size="18" fill="%23FF3E3E" text-anchor="middle" opacity="0.8">?</text></svg>'
+  },
+  {
+    id: 18,
+    title: "Malmstrom AFB (1967)",
+    description: "Ten Minuteman ICBMs at Malmstrom Air Force Base, Montana simultaneously went offline in sequence. A glowing red pulsating disc was reported hovering above Launch Facility Echo-Flight by security officers during the incident.",
+    type: "Aerial",
+    tag: "Alert",
+    distance: "2900.2 km away",
+    time: "March 1967",
+    lat: 47.5049,
+    lng: -111.1872,
+    behaviors: ["Hovering", "Lights", "EM Interference", "Silent"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><circle cx="50" cy="50" r="20" fill="%23FF3E3E" opacity="0.2"/><circle cx="50" cy="50" r="20" stroke="%23FF3E3E" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="6" fill="%23FF3E3E" opacity="0.9"/><circle cx="50" cy="50" r="30" stroke="%23FF3E3E" stroke-width="0.5" fill="none" opacity="0.3"/></svg>'
+  },
+  {
+    id: 19,
+    title: "Ariel School, Zimbabwe (1994)",
+    description: "62 children at Ariel Primary School reported a silver disc landing in the schoolyard at recess. Beings with large eyes emerged and communicated telepathically. Harvard psychiatrist Dr. John Mack investigated and found the children credible.",
+    type: "Land",
+    tag: "Land Sighting",
+    distance: "15700.4 km away",
+    time: "September 1994",
+    lat: -17.8292,
+    lng: 31.0522,
+    behaviors: ["Silent", "Hovering", "Disappeared"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="50" rx="25" ry="10" stroke="%2322C97A" stroke-width="1.5" fill="none"/><ellipse cx="50" cy="44" rx="12" ry="8" stroke="%2322C97A" stroke-width="1" fill="none" opacity="0.6"/><circle cx="50" cy="44" r="3" fill="%2322C97A" opacity="0.8"/></svg>'
+  },
+  {
+    id: 20,
+    title: "Kelly-Hopkinsville (1955)",
+    description: "A family near Kelly, Kentucky was besieged for hours by small glowing beings from a landed craft. A dozen witnesses repeatedly fired at the entities, which were observed floating rather than walking. Law enforcement confirmed the testimony.",
+    type: "Land",
+    tag: "Land Sighting",
+    distance: "1780.6 km away",
+    time: "August 1955",
+    lat: 36.8681,
+    lng: -87.4886,
+    behaviors: ["Lights", "Hovering"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><circle cx="30" cy="45" r="6" stroke="%2322C97A" stroke-width="1" fill="%2322C97A" opacity="0.3"/><circle cx="50" cy="42" r="6" stroke="%2322C97A" stroke-width="1" fill="%2322C97A" opacity="0.3"/><circle cx="70" cy="45" r="6" stroke="%2322C97A" stroke-width="1" fill="%2322C97A" opacity="0.3"/><line x1="25" y1="65" x2="75" y2="65" stroke="%2322C97A" stroke-width="1.5" opacity="0.5"/></svg>'
+  },
+  {
+    id: 21,
+    title: "GIMBAL UAP (2015)",
+    description: "Declassified US Navy FLIR footage shows a rotating oblong craft defying the wind with no visible propulsion. The pilot's exclamation 'Look at that thing!' and 'It's rotating!' validated as authentic by the US DoD and AARO.",
+    type: "Aerial",
+    tag: "Unidentified",
+    distance: "9400.1 km away",
+    time: "January 2015",
+    lat: 30.3322,
+    lng: -81.6557,
+    behaviors: ["Rotating", "Silent", "No Heat Sig", "Hovering"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="50" rx="22" ry="10" stroke="%23B06AFF" stroke-width="1.5" fill="none" transform="rotate(-15 50 50)"/><circle cx="50" cy="50" r="4" fill="%23B06AFF" opacity="0.8"/><path d="M40 38 Q50 28 60 38" stroke="%23B06AFF" stroke-width="1" fill="none" opacity="0.5"/><path d="M40 62 Q50 72 60 62" stroke="%23B06AFF" stroke-width="1" fill="none" opacity="0.5"/></svg>'
+  },
+  {
+    id: 22,
+    title: "Operation Prato, Brazil (1977)",
+    description: "The Brazilian Air Force launched an official investigation after hundreds of residents in the Amazon reported being attacked nightly by powerful light beams from disc-shaped craft, causing burns and injuries. Operation Prato files declassified in 2009.",
+    type: "Aerial",
+    tag: "Alert",
+    distance: "10500.8 km away",
+    time: "October 1977",
+    lat: -0.0000,
+    lng: -51.0650,
+    behaviors: ["Lights", "Hovering", "Multiple Witness"],
+    image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230a0c16"/><ellipse cx="50" cy="44" rx="26" ry="10" stroke="%23FF6B35" stroke-width="1.5" fill="none"/><line x1="50" y1="54" x2="50" y2="80" stroke="%23FF6B35" stroke-width="2" opacity="0.7"/><line x1="38" y1="60" x2="50" y2="54" stroke="%23FF6B35" stroke-width="1" opacity="0.4"/><line x1="62" y1="60" x2="50" y2="54" stroke="%23FF6B35" stroke-width="1" opacity="0.4"/></svg>'
   }
 ];
 
+// ── Tiny localStorage hook ────────────────────────────────────────────────────
+function useLocalStorage(key, defaultValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const stored = localStorage.getItem(key);
+      return stored !== null ? JSON.parse(stored) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // localStorage full or unavailable — fail silently
+    }
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [theme, setTheme] = useState('dark');
-  const [user, setUser] = useState(null);
-  const [reports, setReports] = useState(INITIAL_REPORTS);
+  const [theme, setTheme]     = useLocalStorage('aura:theme', 'dark');
+  const [user, setUser]       = useLocalStorage('aura:user', null);
+  const [reports, setReports] = useLocalStorage('aura:reports', INITIAL_REPORTS);
   const [draftReport, setDraftReport] = useState(null);
 
   // Responsive state
