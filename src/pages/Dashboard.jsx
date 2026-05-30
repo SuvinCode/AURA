@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Map, PlusSquare, Settings, Sun, Moon } from 'lucide-react';
+import { Camera, Map, PlusSquare, Settings, Sun, Moon, LogOut } from 'lucide-react';
 import ScanTab from '../components/ScanTab';
 import MapTab from '../components/MapTab';
 import ReportTab from '../components/ReportTab';
@@ -136,6 +136,15 @@ export default function Dashboard({
                 <Settings className="w-4.5 h-4.5" />
                 <span>Interface Settings</span>
               </button>
+
+              <button
+                id="sidebar-tab-logout"
+                onClick={onSignOut}
+                className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer border border-transparent text-red-500 hover:text-red-400 hover:bg-red-500/10"
+              >
+                <LogOut className="w-4.5 h-4.5" />
+                <span>Log Out</span>
+              </button>
             </nav>
           </div>
 
@@ -212,6 +221,15 @@ export default function Dashboard({
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          
+          <button
+            id="mobile-logout"
+            onClick={onSignOut}
+            className="p-1.5 rounded-lg bg-aura-input border border-aura-border hover:border-red-500/50 text-red-500 hover:text-red-400 transition-all cursor-pointer animate-none"
+            title="Log Out"
+          >
+            <LogOut className="w-4 h-4" />
           </button>
           
           <span className="text-[10px] px-2 py-1 rounded bg-aura-input border border-aura-border font-mono text-aura-muted">
